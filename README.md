@@ -70,6 +70,84 @@ This is why Screen F doesn't ask "what will you do?" — it asks for a specific 
 
 ---
 
+## Technical Architecture
+
+### Data Flow
+
+```mermaid
+flowchart TD
+    UserInput["User Input (browser)"]
+    ZustandStore["Zustand Store (in-memory session)"]
+    ServerAction["Next.js Server Action (server-side)"]
+    OpenAI["OpenAI GPT-4o-mini"]
+    JSONResponse["JSON Response"]
+    UIRender["UI Re-render"]
+    LocalStorage["localStorage (session history)"]
+
+    UserInput -->|"advance screen"| ZustandStore
+    ZustandStore -->|"screen B/C/D/E/F triggers"| ServerAction
+    ServerAction -->|"OPENAI_API_KEY (env-only)"| OpenAI
+    OpenAI -->|"raw JSON"| JSONResponse
+    JSONResponse -->|"parsed + stored"| ZustandStore
+    ZustandStore -->|"reactive"| UIRender
+    ZustandStore -->|"on Screen G complete"| LocalStorage
+    LocalStorage -->|"dashboard reads"| UIRender
+```
+
+### File Structure
+
+```
+src/
+├── app/
+│   ├── page.tsx              # Landing page (/)
+│   ├── layout.tsx            # Root layout, font, metadata
+│   ├── globals.css           # Design tokens, grain overlay, animations
+│   ├── actions.ts            # All 5 Server Actions — AI calls live here
+│   ├── session/
+│   │   └── page.tsx          # 7-screen flow (/session)
+│   └── dashboard/
+│       ├── page.tsx          # Pattern history (/dashboard)
+│       └── DashboardClient.tsx
+├── components/
+│   ├── SocraticFlow.tsx      # AnimatePresence screen router
+│   ├── ProgressBar.tsx       # Fixed 7-step top bar
+│   ├── PrimaryButton.tsx     # Blue button + navigator.vibrate(10)
+│   └── screens/
+│       └── ScreenA.tsx → ScreenG.tsx
+└── lib/
+    ├── store.ts              # Zustand — full session state shape
+    ├── openai.ts             # OpenAI singleton + system prompt
+    └── history.ts            # localStorage read/write for dashboard
+```
+
+### Layer Breakdown
+
+| Layer | Technology | Role |
+|-------|-----------|------|
+| Routing | Next.js 15 App Router | `/`, `/session`, `/dashboard` |
+| Session state | Zustand | In-memory, no persistence during session |
+| AI calls | Next.js Server Actions | Server-only — API key never sent to client |
+| AI model | GPT-4o-mini | JSON mode enforced on every call |
+| Persistence | localStorage | Session history saved on Screen G completion |
+| Animations | Framer Motion | Spring transitions between screens, card reveals |
+| Styling | Tailwind CSS v4 + shadcn/ui | Design tokens + base components |
+
+### Key Architectural Decision: Server Actions
+
+All AI calls are Next.js Server Actions (`"use server"`). This means:
+
+- `OPENAI_API_KEY` lives only in `.env.local` on the server — never bundled into client JS
+- Each action receives only the minimum data it needs for that screen — no full session blob sent over the wire
+- JSON mode is enforced on every OpenAI call — the frontend can always `JSON.parse()` the response safely
+
+```
+Client component calls action → Next.js routes to server → OpenAI called → JSON returned → Zustand updated → UI re-renders
+```
+
+The entire round-trip takes 2-4 seconds. No streaming, no websockets, no queue — GPT-4o-mini is fast enough at this payload size.
+
+---
+
 ## Challenges We Faced
 
 **1. The hardest design decision was what NOT to build.**
