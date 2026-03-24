@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { PrimaryButton } from "@/components/PrimaryButton";
+import { saveSession } from "@/lib/history";
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
@@ -19,8 +21,22 @@ export function ScreenG() {
   const [copied, setCopied] = useState(false);
 
   const pursuedProject = projects.find((p) => p.verdict === "Pursue");
-  const parkedProjects = projects.filter((p) => p.verdict === "Park");
   const killedProjects = projects.filter((p) => p.verdict === "Kill");
+  const parkedProjects = projects.filter((p) => p.verdict === "Park");
+
+  useEffect(() => {
+    if (selectedTheme && commitment) {
+      saveSession({
+        belief: selectedTheme.title,
+        pursuedProject: pursuedProject?.name ?? "—",
+        commitment,
+        timebox: timebox ?? "—",
+        killedProjects: killedProjects.map((p) => p.name),
+        parkedProjects: parkedProjects.map((p) => p.name),
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const summaryText = [
     `THE SOCRATIC ANCHOR — Session Summary`,
@@ -117,9 +133,17 @@ export function ScreenG() {
             {copied ? "Copied to clipboard ✓" : "Export Summary →"}
           </PrimaryButton>
 
-          <p className="text-center text-[13px] text-[#6E6E73] pt-2">
-            Done? Come back when you&rsquo;re stuck again.
-          </p>
+          <div className="flex flex-col items-center gap-3 pt-2">
+            <Link
+              href="/dashboard"
+              className="text-[13px] font-semibold text-[#007AFF] hover:underline"
+            >
+              View your pattern history →
+            </Link>
+            <p className="text-[13px] text-[#6E6E73]">
+              Come back when you&rsquo;re stuck again.
+            </p>
+          </div>
         </motion.div>
       </div>
     </div>

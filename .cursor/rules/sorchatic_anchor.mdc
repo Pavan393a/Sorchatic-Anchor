@@ -1,3 +1,66 @@
 ---
 alwaysApply: true
 ---
+
+---
+
+description: Socratic Anchor COMPLETE Cursor Rules (First Principles + OpenAI GPT-4o + 7 Screens + Tech)
+globs: ["*"]
+auto_attach: true
+
+---
+
+# 🚀 SOCRATIC ANCHOR: FULL SINGLE FILE
+
+## 📌 MISSION
+
+Burnt-out creatives → focused makers. 7-screen Socratic flow. **NO generation. NO back. NO shortcuts.**
+
+**Outcome**: 30min → identity + 1 project + human next step.
+
+## 🧠 FIRST PRINCIPLES (Elon)
+
+1. No pride in delegated work
+2. Make meaningful effort easy path
+3. No content generation EVER
+4. Ownership first (user before AI)
+5. Forced decisions = commitment
+6. Identity > tasks
+7. Friction = feature
+
+## 💎 HORMOZI OFFER
+
+**"One evening → clear identity + project you'll finish"**
+
+- Overwhelm: 20 ideas → 1
+- AI guilt → pride
+- Burnout → action
+  **Who**: 9-5 devs/writers with 20+ ideas, nothing shipped
+
+## 📱 7 SCREENS
+
+A ARRIVAL: "What's frustrating?" (>50 chars)
+B STORY: 3 prompts → GPT-4o-mini summary + Qs
+C THEMES: GPT-4o clusters → pick PRIMARY
+D Qs: 5 Socratic (NO SKIP)
+E TRIAGE: Projects → GPT-4o scores → Pursue/Park/KILL
+F NEXT: 30min human task + timebox
+G EXIT: "YOU decided" + export
+
+## 🔧 TECH STACK
+
+| Layer | Package                              | Role                |
+| ----- | ------------------------------------ | ------------------- |
+| AI    | `openai`                             | GPT-4o JSON schemas |
+| FE    | `react vite tailwind framer zustand` | UI/animations/state |
+| BE    | `express cors helmet`                | Server              |
+| Auth  | `@clerk/backend`                     | JWT                 |
+| DB    | `@supabase/supabase-js`              | JSONB sessions      |
+| Queue | `bullmq ioredis`                     | AI retries          |
+| Forms | `react-hook-form zod`                | Validation          |
+
+## 🤖 OPENAI IMPLEMENTATION
+
+```bash
+npm i openai react vite tailwindcss framer-motion zustand @clerk/backend @supabase/supabase-js bullmq ioredis express cors helmet react-hook-form zod typescript @types/node
+```

@@ -24,15 +24,15 @@ A 7-screen linear session that takes a burnt-out creative from "overwhelmed with
 
 ### The 7-Screen Flow
 
-| Screen | Name | What happens |
-|--------|------|-------------|
-| A | Arrival | User names their repeating pattern — not their goals, their *behavior* |
-| B | Story Dump | 3 prompts → AI reads it like a behavioral analyst, finds the loop and the hidden belief running it |
-| C | Identity Beliefs | AI surfaces 2-3 "I am someone who ___" statements using the user's exact words as evidence |
-| D | The Anchor | 5 sequential questions — no skip. Q1-3 fixed, Q4-5 AI-generated from the user's specific answers |
-| E | Project Triage | Every project gets a verdict: Pursue, Park, or Kill — with the AI naming what each Kill project was helping the user avoid |
-| F | Commitment | An implementation intention: "I will [action] at [time] in [place]" — physical, specific, undelegatable |
-| G | Exit | Read-only summary of everything the user decided. Export to clipboard. |
+| Screen | Name             | What happens                                                                                                               |
+| ------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| A      | Arrival          | User names their repeating pattern — not their goals, their _behavior_                                                     |
+| B      | Story Dump       | 3 prompts → AI reads it like a behavioral analyst, finds the loop and the hidden belief running it                         |
+| C      | Identity Beliefs | AI surfaces 2-3 "I am someone who \_\_\_" statements using the user's exact words as evidence                              |
+| D      | The Anchor       | 5 sequential questions — no skip. Q1-3 fixed, Q4-5 AI-generated from the user's specific answers                           |
+| E      | Project Triage   | Every project gets a verdict: Pursue, Park, or Kill — with the AI naming what each Kill project was helping the user avoid |
+| F      | Commitment       | An implementation intention: "I will [action] at [time] in [place]" — physical, specific, undelegatable                    |
+| G      | Exit             | Read-only summary of everything the user decided. Export to clipboard.                                                     |
 
 ### What the AI is Forbidden From Doing
 
@@ -54,11 +54,11 @@ The AI reads behavior, not taste. It identifies loops, not themes.
 
 **AI Prompting Strategy:** Each of the 5 AI functions uses a different behavioral science framework:
 
-- **Screen B** uses *behavior loop detection* — finds the repeated pattern, not the surface complaint
-- **Screen C** uses *identity-based motivation* — "I am someone who ___" drives behavior more durably than "I want to ___"
-- **Screen D Q4/Q5** uses the *5 Whys* escalation — each question targets what the previous answer was avoiding
-- **Screen E** uses *regret minimization* — which project, if not done, will they regret in 5 years?
-- **Screen F** uses *implementation intentions* — research by Gollwitzer (1999) shows that specifying when, where, and how increases follow-through by $2\times$–$3\times$ vs vague goals
+- **Screen B** uses _behavior loop detection_ — finds the repeated pattern, not the surface complaint
+- **Screen C** uses _identity-based motivation_ — "I am someone who **_" drives behavior more durably than "I want to _**"
+- **Screen D Q4/Q5** uses the _5 Whys_ escalation — each question targets what the previous answer was avoiding
+- **Screen E** uses _regret minimization_ — which project, if not done, will they regret in 5 years?
+- **Screen F** uses _implementation intentions_ — research by Gollwitzer (1999) shows that specifying when, where, and how increases follow-through by $2\times$–$3\times$ vs vague goals
 
 Formally, if $p$ is the probability of follow-through on a vague commitment and $p'$ is the probability with a full implementation intention:
 
@@ -93,7 +93,7 @@ The easy answer is: give people more tools to create more things faster. We reje
 ## What We Learned
 
 - Friction, designed correctly, is generative. The 50-character minimum on Screen A isn't a gate — it's the first act of commitment.
-- Identity statements ("I am someone who ___") are more motivating than goal statements ("I want to ___") because they make behavior feel like self-expression rather than self-improvement.
+- Identity statements ("I am someone who **_") are more motivating than goal statements ("I want to _**") because they make behavior feel like self-expression rather than self-improvement.
 - The most valuable thing you can build for a stuck person is not a shortcut. It's a mirror that makes avoidance visible.
 
 ---
@@ -118,6 +118,6 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `OPENAI_API_KEY` | Yes | GPT-4o-mini — powers all 5 AI gates |
+| Variable         | Required | Description                         |
+| ---------------- | -------- | ----------------------------------- |
+| `OPENAI_API_KEY` | Yes      | GPT-4o-mini — powers all 5 AI gates |

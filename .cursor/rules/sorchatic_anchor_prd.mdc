@@ -1,3 +1,123 @@
 ---
 alwaysApply: true
 ---
+
+# Socratic Anchor PRD
+
+Socratic Anchor is a Claude-powered web app that guides burnt-out creatives through reflection to commit to one meaningful project, rejecting AI content generation. It uses Socratic questioning to build ownership and identity. This PRD breaks it down to atomic screens, components, data flows, tech stack, and Apple-inspired UI. [g2](https://www.g2.com/products/socratic/competitors/alternatives)
+
+## Product Overview
+
+Target users are students, devs, writers with 9-5 jobs, overwhelmed by ideas and AI slop, seeking direction without delegation. Core promise: One session yields a creative theme, triaged projects, and a human next step. No "generate" buttons—AI only structures user input via prompts. [zapier](https://zapier.com/blog/claude-api/)
+
+Success metrics: 70% users complete commitment screen, 50% mark next step done within 24h, NPS >8. MVP launch Q2 2026. [socratic.en.uptodown](https://socratic.en.uptodown.com/android/alternatives)
+
+## Atomic Workflow Breakdown
+
+Workflow spans 7 screens as linear flow with no backtracking to maintain momentum. Each screen is an atomic unit with 1-3 inputs and AI gate.
+
+### Screen A: Arrival (I'm Stuck)
+
+- Single textarea: "What's frustrating you about your creative life right now?"
+- Static note: "This space won't write for you. It helps you figure out what matters."
+- Button: "Continue to Story Dump" (disabled until 50+ chars).
+- Behavior: Validates input length >50 chars client-side. [type](https://type.ai/writing-templates/product-requirements-document-prd)
+
+### Screen B: Story Dump (Grounding)
+
+- 3 textareas:
+  1. "List 3–5 projects/ideas you care about."
+  2. "Describe 1–2 proud moments of something you made."
+  3. "Describe 1–2 burnout moments when work felt pointless."
+- Button: "Reflect with Claude" (progressive disclosure after all filled).
+- AI: On submit, Claude summarizes in user words + 1-2 questions (e.g., "Which project hurts most to abandon?"). Display summary/questions read-only. [collabnix](https://collabnix.com/claude-api-integration-guide-2025-complete-developer-tutorial-with-code-examples/)
+
+### Screen C: Your Throughlines (Theme Extraction)
+
+- AI generates 2-3 editable cards:
+  - Title (input field).
+  - 1-2 user quote snippets (read-only).
+- Actions per card: Rename, Merge, Delete checkboxes.
+- Dropdown: Select 1 primary theme.
+- Button: "Deep Dive on Primary" (requires selection). [socratic.en.uptodown](https://socratic.en.uptodown.com/android/alternatives)
+
+### Screen D: Anchor Questions (Socratic Dive)
+
+- Sequential 5 questions, one at a time (no skip):
+  1. "Tell me a real person matching this theme."
+  2. "What are they afraid of? What do you wish to give them?"
+  3. "When did you not live this theme, and how did it feel?"
+     4-5: AI-generated based on prior answers (e.g., contradictions).
+- Per question: Textarea + "Next Question" button.
+- AI interjections: After 2-3, reflect patterns (read-only). [zapier](https://zapier.com/blog/claude-api/)
+
+### Screen E: Pick Your Battles (Triage)
+
+- User inputs 3-5 projects (add/remove rows).
+- Per project: AI scores Alignment (Low/Med/High badge), time check: "Hours/week you can give?"
+- Recommendations: Pursue/Park/Kill buttons with 1-line rationale.
+- Force click one per project; "Confirm All" to proceed. [socratic.en.uptodown](https://socratic.en.uptodown.com/android/alternatives)
+
+### Screen F: Next 60 Minutes (Commitment)
+
+- For committed project: Co-design textarea (pre-filled AI suggestion, e.g., "Outline 3 points in your words, no AI").
+- Timebox picker: Tonight/Tomorrow morning.
+- Checkbox: "Export summary later."
+- Button: "Commit & Exit". [collabnix](https://collabnix.com/claude-api-integration-guide-2025-complete-developer-tutorial-with-code-examples/)
+
+### Screen G: Exit (Reinforce)
+
+- Read-only summary: "You clarified [theme]. Killed [X]. Commit [Y] by [time]."
+- Export: Copy/Email/Notion button.
+- CTA: "Done? Check back when stuck." [type](https://type.ai/writing-templates/product-requirements-document-prd)
+
+## Backend Tech Stack
+
+Node.js/Express server for MVP speed, scalable to Next.js later. Key components: [youtube](https://www.youtube.com/watch?v=qqTN5uMOfRo)
+
+- **AI Model**: GPT-4o-mini(via API key). System prompt enforces Socratic mode: "Summarize only, ask clarifying questions, no content generation. Output JSON: {summary: str, questions: array}".
+- **Database**: Supabase (Postgres) for sessions (user_id, screen_data JSONB, theme JSON, commitments JSON).
+- **Auth**: jwt (email/password,).
+- **Queue**: BullMQ for AI calls (rate limit ).
+- **Other**: Redis cache for sessions, Stripe for future pro tier.
+
+| Component | Tech           | Purpose                  |
+| --------- | -------------- | ------------------------ |
+| Server    | Node/Express   | Routes, AI orchestration |
+| DB        | Supabase       | Persist sessions, users  |
+| AI        | Claude API     | Reflection/themes/triage |
+| Auth      | Clerk          | Sessions/users           |
+| Frontend  | React/Tailwind | UI screens               |
+
+## Data Flow
+
+1. User inputs → Frontend validates → POST /api/screen-X → Backend stores temp session.
+2. On AI gates (B,C,D,E): Backend crafts prompt with prior data → Claude API → Parse JSON response → Return to FE.
+3. Full session → Store as JSONB blob → Optional export via email API.
+4. Diagram (text): User → FE → BE → Claude → BE → FE → DB (async). No real-time; 2-5s AI latency. [collabnix](https://collabnix.com/claude-api-integration-guide-2025-complete-developer-tutorial-with-code-examples/)
+
+```
+User Input (Screen B) → BE Prompt: "Summarize: [user text]" → Claude → JSON {themes: [...]} → FE Cards → User Edits → DB
+```
+
+## Frontend UI (Apple-Inspired)
+
+React app, TailwindCSS for HIG principles: Clarity (large text, ample whitespace), Deference (content-focused, subtle shadows), Depth (layered cards, smooth transitions). [brilworks](https://www.brilworks.com/blog/apple-human-interface-guidelines/)
+
+- **Layout**: Fullscreen modals per screen, SF Pro font, rounded corners (16px), translucent blurs.
+- **Components**:
+  - Textareas: Large, auto-resize, placeholder guidance.
+  - Cards: Elevated (shadow-md), swipe to delete/merge.
+  - Buttons: Primary blue (#007AFF), full-width, haptic feedback (via navigator.vibrate).
+  - Progress: Thin top bar (7 steps).
+- **Animations**: Fade-in questions, slide-up cards (framer-motion).
+- **Responsive**: iPad-first, scales to desktop/mobile.
+- **Accessibility**: VoiceOver labels, high contrast, keyboard nav. [brilworks](https://www.brilworks.com/blog/apple-human-interface-guidelines/)
+
+| HIG Principle | Implementation                          |
+| ------------- | --------------------------------------- |
+| Clarity       | 24pt titles, 1.5 line height            |
+| Deference     | Max 80% width content, blur backgrounds |
+| Depth         | Card z-index layering, scale on hover   |
+
+This micro-level spec enables weekend MVP build while preserving behavior logic. [g2](https://www.g2.com/products/socratic/competitors/alternatives)
